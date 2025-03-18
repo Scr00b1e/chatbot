@@ -1,14 +1,23 @@
-from openai import OpenAI
-client = OpenAI()
 
-completion = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {
-            "role": "user",
-            "content": "How can I help you today?"
-        }
-    ]
-)
+import logging
+import asyncio
+from aiogram import Bot, Dispatcher
 
-print(completion.choices[0].message.content)
+from config import TGTOKEN
+from app.handlers import router
+
+bot = Bot(TGTOKEN)
+dp = Dispatcher()
+
+async def main():
+    await bot.delete_webhook()
+
+    dp.include_router(router)
+    await dp.start_polling(bot)
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print('Exit')
