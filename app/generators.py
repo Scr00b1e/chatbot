@@ -1,12 +1,18 @@
-from openai import AsyncOpenAI
-from config import TOKEN
+from openai import OpenAI
+from config import ORTOKEN
 
-client = AsyncOpenAI(api_key=TOKEN)
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key=ORTOKEN,
+)
 
-async def gpt4(question):
-    response = await client.chat.completions.create(
-        messages=[{"role": "user",
-                   "content": str(question)}],
-        model="gpt-4o"
-    )
-    return response
+completion = client.chat.completions.create(
+  model="deepseek/deepseek-chat",
+  messages=[
+    {
+      "role": "user",
+      "content": "What is the meaning of life?"
+    }
+  ]
+)
+print(completion.choices[0].message.content)
