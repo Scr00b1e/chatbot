@@ -4,12 +4,12 @@ from aiogram import F, Router
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
-from app.generators import gpt4
+from app.generators import ai_generate
 
 router = Router()
 
 class Generate(StatesGroup):
-    text = State()
+    wait = State()
 
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
@@ -20,12 +20,13 @@ async def cmd_start(message: Message, state: FSMContext):
 async def get_msg(message: Message):
     await message.answer('good')
 
-@router.message(F.text)
-async def generate(message: Message, state: FSMContext):
-    await state.set_state(Generate.text)
-    response = await gpt4(message.text)
-    await message.answer(response.choices[0].message.content)
-
-@router.message(Generate.text)
+@router.message(Generate.wait)
 async def generate_error(message: Message):
     await message.answer('Wait, its generating')
+
+@router.message()
+async def generate(message: Message, state: FSMContext):
+    await state.set_state(Generate.wait)
+    response = await ai_generate(message.text)
+    await message.answer(response)
+    await state.clear()
