@@ -1,9 +1,8 @@
 from openai import OpenAI
-from config import ORTOKEN
 
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key=ORTOKEN,
+  api_key="",
 )
 
 completion = client.chat.completions.create(
